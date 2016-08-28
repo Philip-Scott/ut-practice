@@ -1,29 +1,68 @@
 package mx.iteso.ut_practice;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 
 public class Date {
-    public String age (String fecha){
+    private static String INVALID_ERROR = "Error: Formato invalido";
+    private static String INVALID_DAY = "Error: Dia invalido";
+    private static String INVALID_MONTH = "Error: Mes invalido";
+    private static String INVALID_YEAR = "Error: Ano invalido";
+    private static String FUTURE_DATE = "Error: fecha futura";
+
+    public String age(String fecha) {
         String age = "";
         String[] parts = fecha.split("/");
-        int day = Integer.parseInt(parts[0]);
-        int month = Integer.parseInt(parts[1]);
-        int year = Integer.parseInt(parts[2]);
 
-        LocalDate start = LocalDate.of(year, month, day);
-        LocalDate today = LocalDate.now(); // use for age-calculation: LocalDate.now()
+        if (parts.length != 3)
+            return INVALID_ERROR;
 
-        long days = start.getDay ();
-        long months = ChronoUnit.MONTHS.between(start, today);
-        long years = ChronoUnit.YEARS.between(start, today);
+        int day, month, year;
 
-        System.out.println(years); // 17
-        System.out.println(months); // 17
-        System.out.println(days); // 17
 
-        age += (years > 1 ? years + " años" : "1 año") + (months > 1 ? months + " meses" : "1 mes") + (days > 1 ? days + " dias" : "1 dia");
+        day = get_number(parts[0]);
+        month = get_number(parts[1]);
+        year = get_number(parts[2]);
+
+        if (day == -1) return INVALID_DAY;
+        if (month == -1) return INVALID_MONTH;
+        if (year == -1) return INVALID_YEAR;
+
+        LocalDate start;
+        LocalDate today = LocalDate.now();
+
+        try {
+            start = LocalDate.of(year, month, day);
+        } catch (java.time.DateTimeException e) {
+            return e.getMessage().contains("DayOfMonth") ? INVALID_DAY : INVALID_MONTH;
+        }
+
+
+        if (today.isBefore(start)) return FUTURE_DATE;
+
+        Period between = Period.between(start, today);
+
+        long days = between.getDays();
+        long months = between.getMonths();
+        long years = between.getYears();
+
+        age += (years > 1 ? years + " años " : "1 año ") + (months > 1 ? months + "meses y " : "1 mes y ") + (days > 1 ? days + " dias" : "1 dia");
 
         return age;
+    }
+
+    private int get_number(String string) {
+        int number;
+
+        try {
+            number = Integer.parseInt(string);
+        } catch (NumberFormatException e) {
+            number = -1;
+        }
+        if (number < 1)
+            number = -1;
+
+        return number;
     }
 }

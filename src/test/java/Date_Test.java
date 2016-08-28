@@ -11,6 +11,7 @@ import org.junit.Test;
 public class Date_Test {
 
     Date date;
+
     @Before
     public void setUp () {
         date = new Date ();
@@ -18,22 +19,34 @@ public class Date_Test {
 
     @Test
     public void fecha_valida () {
-        assertEquals   ("1 año 1 mes y 1 dia", date.age ("24/7/2015"));
+        assertEquals ("1 año 1 mes y 1 dia", date.age ("27/7/2015"));
     }
 
     @Test
-    public void dia_invalido () {}
+    public void dia_invalido () {
+        assertEquals ("Error: Dia invalido", date.age ("44/7/2015"));
+        assertEquals ("Error: Dia invalido", date.age ("0/7/2015"));
+    }
 
     @Test
-    public void mes_invalido () {}
+    public void mes_invalido () {
+        assertEquals ("Error: Mes invalido", date.age ("24/72/2015"));
+        assertEquals ("Error: Mes invalido", date.age ("24/0/2015"));
+    }
 
     @Test
-    public void ano_invalido () {}
+    public void ano_invalido () {
+        assertEquals ("Error: Ano invalido", date.age ("24/7/fasdf"));
+        assertEquals ("Error: Ano invalido", date.age ("24/7/-2133"));
+    }
 
     @Test
-    public void formato_invalido () {}
+    public void formato_invalido () {
+        assertEquals ("Error: Formato invalido", date.age ("24-7-2015"));
+    }
 
     @Test
-    public void fecha_futura () {}
-
+    public void fecha_futura () {
+        assertEquals ("Error: fecha futura", date.age ("24/7/3015"));
+    }
 }
